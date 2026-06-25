@@ -1,0 +1,18 @@
+# Secrets — NEVER commit real keys
+.env
+.env.local
+*.key
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Node (if any tooling is added later)
+node_modules/
+npm-debug.log*
+
+# n8n local exports that may contain credentials — export to /workflows manually instead
+*.credentials.json
+</content>

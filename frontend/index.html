@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crestview Realty — Find your next home</title>
+  <meta name="description" content="Tell Crestview Realty what you're looking for and get an instant, personalized response from our team." />
+  <style>
+    :root {
+      --bg: #0f1417;
+      --bg-soft: #161d22;
+      --card: #1b242a;
+      --line: #2c383f;
+      --text: #eef3f4;
+      --muted: #9bb0b6;
+      --accent: #d8a24a;      /* warm gold */
+      --accent-2: #e7c07e;
+      --good: #4ade80;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(1200px 600px at 80% -10%, #21303a 0%, transparent 60%),
+                  radial-gradient(900px 500px at -10% 110%, #2a2418 0%, transparent 55%),
+                  var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      padding: 32px 18px;
+    }
+    .wrap { width: 100%; max-width: 600px; }
+    .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+    .brand .dot {
+      width: 30px; height: 30px; border-radius: 7px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 6px 18px rgba(216,162,74,.35);
+      display:grid; place-items:center; color:#1b1206; font-weight:800; font-size:16px;
+    }
+    .brand b { font-size: 18px; letter-spacing: .2px; }
+    .brand span { color: var(--muted); font-size: 12px; display:block; }
+    .card {
+      background: linear-gradient(180deg, var(--card), var(--bg-soft));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 26px 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    }
+    h1 { margin: 0 0 6px; font-size: 23px; }
+    .sub { margin: 0 0 22px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+    label { display: block; font-size: 13px; color: var(--muted); margin: 14px 0 6px; }
+    .req { color: var(--accent); }
+    input, select, textarea {
+      width: 100%; padding: 11px 12px;
+      background: #10171b; color: var(--text);
+      border: 1px solid var(--line); border-radius: 10px;
+      font-size: 14px; outline: none; transition: border-color .15s, box-shadow .15s;
+      font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(216,162,74,.18);
+    }
+    textarea { resize: vertical; min-height: 88px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+    button {
+      margin-top: 22px; width: 100%; padding: 13px 16px;
+      border: 0; border-radius: 11px; cursor: pointer;
+      font-size: 15px; font-weight: 700; color: #1b1206;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      transition: transform .06s ease, opacity .15s;
+    }
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+    .hint { margin-top: 12px; font-size: 12px; color: var(--muted); text-align: center; }
+    .err { color: #fca5a5; font-size: 13px; margin-top: 10px; min-height: 0; }
+    .result { display: none; text-align: center; padding: 8px 4px; }
+    .result.show { display: block; animation: fade .35s ease; }
+    @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    .check {
+      width: 54px; height: 54px; margin: 6px auto 14px; border-radius: 50%;
+      display: grid; place-items: center; font-size: 26px;
+      background: rgba(74,222,128,.12); color: var(--good);
+      border: 1px solid rgba(74,222,128,.4);
+    }
+    .result h2 { margin: 0 0 10px; font-size: 20px; }
+    .reply {
+      background: #10171b; border: 1px solid var(--line); border-radius: 12px;
+      padding: 16px; color: var(--text); font-size: 14.5px; line-height: 1.6; text-align: left;
+    }
+    .reply .who { color: var(--accent); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .6px; display:block; margin-bottom: 6px; }
+    .again { margin-top: 16px; background: transparent; border: 1px solid var(--line); color: var(--muted); }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(27,18,6,.35); border-top-color: #1b1206; border-radius: 50%; vertical-align: -3px; margin-right: 8px; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">
+      <span class="dot">C</span>
+      <div><b>Crestview Realty</b><span>Buy · Sell · Rent · Invest</span></div>
+    </div>
+
+    <div class="card">
+      <!-- FORM -->
+      <form id="leadForm" novalidate>
+        <h1>Let's find your next move.</h1>
+        <p class="sub">Tell us what you're looking for and you'll get an instant, personalized response — then a same-day call from your dedicated agent.</p>
+
+        <label for="full_name">Full name <span class="req">*</span></label>
+        <input id="full_name" name="full_name" autocomplete="name" required />
+
+        <div class="row">
+          <div>
+            <label for="email">Email <span class="req">*</span></label>
+            <input id="email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div>
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" autocomplete="tel" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="intent">I want to <span class="req">*</span></label>
+            <select id="intent" name="intent" required>
+              <option value="">Select…</option>
+              <option value="buy">Buy a home</option>
+              <option value="sell">Sell my home</option>
+              <option value="rent">Rent</option>
+              <option value="invest">Invest</option>
+            </select>
+          </div>
+          <div>
+            <label for="property_type">Property type</label>
+            <select id="property_type" name="property_type">
+              <option value="">Any</option>
+              <option>House</option>
+              <option>Condo</option>
+              <option>Townhouse</option>
+              <option>Land</option>
+              <option>Multi-family</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="location">Area / neighborhood</label>
+        <input id="location" name="location" placeholder="e.g. Westside, Northgate, Downtown" />
+
+        <div class="row">
+          <div>
+            <label for="budget">Budget / price range</label>
+            <select id="budget" name="budget">
+              <option value="">Not sure yet</option>
+              <option>Under $200k</option>
+              <option>$200k–$400k</option>
+              <option>$400k–$600k</option>
+              <option>$600k–$1M</option>
+              <option>$1M+</option>
+            </select>
+          </div>
+          <div>
+            <label for="timeline">Timeline</label>
+            <select id="timeline" name="timeline">
+              <option value="browsing">Just browsing</option>
+              <option value="3-6 months">3–6 months</option>
+              <option value="1-3 months">1–3 months</option>
+              <option value="asap">ASAP</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="financing">Financing status</label>
+        <select id="financing" name="financing">
+          <option value="researching">Just researching</option>
+          <option value="need lender">Need a lender</option>
+          <option value="pre-approved">Pre-approved</option>
+          <option value="cash">Cash buyer</option>
+        </select>
+
+        <label for="message">Tell us what you're looking for <span class="req">*</span></label>
+        <textarea id="message" name="message" placeholder="e.g. 3-bed house in the Westside with a yard, good schools, hoping to move within 2 months." required></textarea>
+
+        <button type="submit" id="submitBtn">Get my personalized response</button>
+        <div class="err" id="err"></div>
+        <p class="hint">We reply in seconds, then a real agent follows up the same day. No spam, ever.</p>
+      </form>
+
+      <!-- RESULT -->
+      <div class="result" id="result">
+        <div class="check" id="resultIcon">✓</div>
+        <h2 id="resultTitle">Thanks — we've got your details!</h2>
+        <div class="reply"><span class="who" id="replyWho">Crestview Realty</span><span id="replyText"></span></div>
+        <button class="again" id="againBtn" type="button">Send another</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Public production webhook for the n8n real-estate lead workflow.
+    // Replace with your n8n webhook URL after importing the workflow.
+    const WEBHOOK = "https://YOUR-SUBDOMAIN.app.n8n.cloud/webhook/realestate-intake";
+
+    const form = document.getElementById("leadForm");
+    const btn = document.getElementById("submitBtn");
+    const errEl = document.getElementById("err");
+    const result = document.getElementById("result");
+    const replyText = document.getElementById("replyText");
+    const resultTitle = document.getElementById("resultTitle");
+    const replyWho = document.getElementById("replyWho");
+    const BTN_LABEL = "Get my personalized response";
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errEl.textContent = "";
+
+      // client-side validation (mirrors the webhook's edge validation)
+      const data = Object.fromEntries(new FormData(form));
+      data.source = "website";
+      if (!data.full_name?.trim()) return fail("Please enter your name.");
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email || "")) return fail("Please enter a valid email.");
+      if (!data.intent) return fail("Please tell us whether you want to buy, sell, rent, or invest.");
+      if (!data.message?.trim()) return fail("Please tell us what you're looking for.");
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Sending…';
+
+      try {
+        const res = await fetch(WEBHOOK, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        if (res.status === 400) {
+          const body = await res.json().catch(() => ({}));
+          return fail((body.errors && body.errors.join(" ")) || "Please check your details and try again.");
+        }
+        if (!res.ok) throw new Error("HTTP " + res.status);
+
+        const body = await res.json().catch(() => ({}));
+        showResult(body);
+      } catch (ex) {
+        fail("Something went wrong sending your message. Please try again in a moment.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = BTN_LABEL;
+      }
+    });
+
+    function showResult(body) {
+      if (body.duplicate) {
+        resultTitle.textContent = "Good to hear from you again!";
+        replyWho.textContent = "Crestview Realty";
+        replyText.textContent = body.message || "We already have your inquiry on file. Your agent will be in touch shortly.";
+      } else {
+        resultTitle.textContent = "Thanks — here's a quick note from us:";
+        replyWho.textContent = "Crestview Realty";
+        replyText.textContent = body.reply || "Got it! Your dedicated agent will review your details and reach out shortly.";
+      }
+      form.style.display = "none";
+      result.classList.add("show");
+    }
+
+    function fail(msg) {
+      errEl.textContent = msg;
+      btn.disabled = false;
+      btn.textContent = BTN_LABEL;
+    }
+
+    document.getElementById("againBtn").addEventListener("click", () => {
+      form.reset();
+      form.style.display = "";
+      result.classList.remove("show");
+      errEl.textContent = "";
+    });
+  </script>
+</body>
+</html>
+</content>

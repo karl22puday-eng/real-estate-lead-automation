@@ -1,0 +1,562 @@
+{
+    "name":  "02 Lead Qualification",
+    "nodes":  [
+                  {
+                      "parameters":  {
+                                         "httpMethod":  "POST",
+                                         "path":  "realestate-intake",
+                                         "responseMode":  "responseNode",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "n-webhook",
+                      "name":  "Webhook",
+                      "type":  "n8n-nodes-base.webhook",
+                      "typeVersion":  2,
+                      "position":  [
+                                       220,
+                                       400
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "mode":  "runOnceForAllItems",
+                                         "jsCode":  "// Webhook payload is under .body (also works if Meta Lead Ads is mapped to the same shape)\nconst inb = ($input.first().json.body) || {};\nconst s = v =\u003e (v == null ? \u0027\u0027 : String(v)).trim();\nconst email = s(inb.email).toLowerCase();\nconst full_name = s(inb.full_name);\nconst message = s(inb.message);\nconst intent = s(inb.intent).toLowerCase();\nconst errors = [];\nif (!full_name) errors.push(\u0027full_name is required\u0027);\nif (!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email)) errors.push(\u0027a valid email is required\u0027);\nif (!intent) errors.push(\u0027intent is required\u0027);\n\n// dedup key: stable 53-bit hash of email|message (no external deps)\nfunction cyrb53(str, seed = 0) {\n  let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;\n  for (let i = 0, ch; i \u003c str.length; i++) {\n    ch = str.charCodeAt(i);\n    h1 = Math.imul(h1 ^ ch, 2654435761);\n    h2 = Math.imul(h2 ^ ch, 1597334677);\n  }\n  h1 = Math.imul(h1 ^ (h1 \u003e\u003e\u003e 16), 2246822507);\n  h1 ^= Math.imul(h2 ^ (h2 \u003e\u003e\u003e 13), 3266489909);\n  h2 = Math.imul(h2 ^ (h2 \u003e\u003e\u003e 16), 2246822507);\n  h2 ^= Math.imul(h1 ^ (h1 \u003e\u003e\u003e 13), 3266489909);\n  return (4294967296 * (2097151 \u0026 h2) + (h1 \u003e\u003e\u003e 0)).toString(16);\n}\n\nreturn [{ json: {\n  valid: errors.length === 0,\n  errors,\n  full_name, email, message, intent,\n  phone: s(inb.phone),\n  property_type: s(inb.property_type),\n  location: s(inb.location),\n  budget: s(inb.budget),\n  timeline: (s(inb.timeline) || \u0027browsing\u0027).toLowerCase(),\n  financing: (s(inb.financing) || \u0027researching\u0027).toLowerCase(),\n  source: s(inb.source) || \u0027website\u0027,\n  dedup_key: cyrb53(email + \u0027|\u0027 + message)\n}}];"
+                                     },
+                      "id":  "n-validate",
+                      "name":  "Validate",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       440,
+                                       400
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  true,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "loose"
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "id":  "cond-valid",
+                                                                                   "leftValue":  "={{ $json.valid }}",
+                                                                                   "rightValue":  true,
+                                                                                   "operator":  {
+                                                                                                    "type":  "boolean",
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "n-if",
+                      "name":  "IF Valid",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       660,
+                                       400
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "respondWith":  "json",
+                                         "responseBody":  "={{ JSON.stringify({ ok: false, errors: $json.errors }) }}",
+                                         "options":  {
+                                                         "responseCode":  400
+                                                     }
+                                     },
+                      "id":  "n-resp400",
+                      "name":  "Respond 400",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1,
+                      "position":  [
+                                       880,
+                                       580
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "https://YOUR-PROJECT.supabase.co/rest/v1/rpc/lead_exists",
+                                         "authentication":  "predefinedCredentialType",
+                                         "nodeCredentialType":  "supabaseApi",
+                                         "sendBody":  true,
+                                         "specifyBody":  "json",
+                                         "jsonBody":  "={{ JSON.stringify({ p_key: $json.dedup_key }) }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "n-dedup",
+                      "name":  "Dedup Check",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       880,
+                                       300
+                                   ],
+                      "retryOnFail":  true,
+                      "maxTries":  3,
+                      "waitBetweenTries":  2000
+                  },
+                  {
+                      "parameters":  {
+                                         "mode":  "runOnceForAllItems",
+                                         "jsCode":  "const items = $input.all();\nconst row = (items.length === 1 \u0026\u0026 Array.isArray(items[0].json)) ? items[0].json[0] : items[0].json;\nconst found = !!(row \u0026\u0026 (row.found === true || row.found === \u0027true\u0027));\nconst lead = $(\u0027Validate\u0027).first().json;\nreturn [{ json: { ...lead, found } }];"
+                                     },
+                      "id":  "n-checkdedup",
+                      "name":  "Check Dedup",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1080,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  true,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "loose"
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "id":  "cond-exists",
+                                                                                   "leftValue":  "={{ $json.found }}",
+                                                                                   "rightValue":  true,
+                                                                                   "operator":  {
+                                                                                                    "type":  "boolean",
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "n-ifexists",
+                      "name":  "IF Exists",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1280,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "respondWith":  "json",
+                                         "responseBody":  "={{ JSON.stringify({ ok: true, duplicate: true, message: \"We already have your inquiry on file. Your Crestview agent will be in touch shortly.\" }) }}",
+                                         "options":  {
+                                                         "responseCode":  200
+                                                     }
+                                     },
+                      "id":  "n-respdup",
+                      "name":  "Respond Duplicate",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1,
+                      "position":  [
+                                       1280,
+                                       520
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent",
+                                         "authentication":  "genericCredentialType",
+                                         "genericAuthType":  "httpHeaderAuth",
+                                         "sendBody":  true,
+                                         "specifyBody":  "json",
+                                         "jsonBody":  "={{ JSON.stringify({ model: \"models/gemini-embedding-001\", content: { parts: [ { text: $json.message } ] }, outputDimensionality: 768 }) }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "n-embed",
+                      "name":  "Embed Lead",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       1480,
+                                       300
+                                   ],
+                      "retryOnFail":  true,
+                      "maxTries":  3,
+                      "waitBetweenTries":  2000
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "https://YOUR-PROJECT.supabase.co/rest/v1/rpc/match_documents",
+                                         "authentication":  "predefinedCredentialType",
+                                         "nodeCredentialType":  "supabaseApi",
+                                         "sendBody":  true,
+                                         "specifyBody":  "json",
+                                         "jsonBody":  "={{ JSON.stringify({ query_embedding: \"[\" + $json.embedding.values.join(\",\") + \"]\", match_count: 5 }) }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "n-rag",
+                      "name":  "RAG Retrieve",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       1700,
+                                       300
+                                   ],
+                      "retryOnFail":  true,
+                      "maxTries":  3,
+                      "waitBetweenTries":  2000
+                  },
+                  {
+                      "parameters":  {
+                                         "mode":  "runOnceForAllItems",
+                                         "jsCode":  "// Normalize RAG output (HTTP node may spread the array into items, or return one array item)\nconst items = $input.all();\nlet matches = [];\nif (items.length === 1 \u0026\u0026 Array.isArray(items[0].json)) matches = items[0].json;\nelse matches = items.map(i =\u003e i.json);\nconst context = matches.map(m =\u003e m \u0026\u0026 m.content).filter(Boolean).join(\u0027\\n\\n---\\n\\n\u0027)\n  || \u0027(no agency context retrieved)\u0027;\n\nconst lead = $(\u0027Validate\u0027).first().json;\n\nconst systemPrompt =\n  \u0027You are a lead qualification assistant for Crestview Realty, a residential real estate brokerage. \u0027 +\n  \u0027Use ONLY the CONTEXT to answer anything about the agency, buying/selling process, areas, or fees; \u0027 +\n  \u0027if the context does not cover it, say a Crestview agent will follow up. Return STRICT JSON only \u0027 +\n  \u0027(no prose, no markdown) with exactly these keys: {\"summary\": string (\u003c=2 sentences describing the \u0027 +\n  \u0027lead and what they want), \"financing_signal\":\"high|medium|low\", \"timeline_signal\":\"high|medium|low\", \u0027 +\n  \u0027\"fit_signal\":\"high|medium|low\", \"reply\": string (warm, helpful 2-3 sentence reply to the lead, \u0027 +\n  \u0027grounded in CONTEXT, inviting them to a no-pressure consultation)}. \u0027 +\n  \u0027financing_signal: pre-approved or cash buyer = high; needs a lender = medium; just researching = low. \u0027 +\n  \u0027timeline_signal: asap or 1-3 months = high; 3-6 months = medium; just browsing = low. \u0027 +\n  \u0027fit_signal: how well their intent, area, and budget match what Crestview serves per CONTEXT.\u0027;\n\nconst userPrompt =\n  \u0027CONTEXT:\\n\u0027 + context + \u0027\\n\\nLEAD:\\n\u0027 +\n  \u0027Name: \u0027 + lead.full_name + \u0027\\n\u0027 +\n  \u0027Intent: \u0027 + (lead.intent || \u0027(not given)\u0027) + \u0027\\n\u0027 +\n  \u0027Property type: \u0027 + (lead.property_type || \u0027(any)\u0027) + \u0027\\n\u0027 +\n  \u0027Area: \u0027 + (lead.location || \u0027(not given)\u0027) + \u0027\\n\u0027 +\n  \u0027Budget: \u0027 + (lead.budget || \u0027(not given)\u0027) + \u0027\\n\u0027 +\n  \u0027Timeline: \u0027 + lead.timeline + \u0027\\n\u0027 +\n  \u0027Financing: \u0027 + lead.financing + \u0027\\n\u0027 +\n  \u0027Message: \u0027 + (lead.message || \u0027(none)\u0027);\n\nreturn [{ json: { systemPrompt, userPrompt } }];"
+                                     },
+                      "id":  "n-assemble",
+                      "name":  "Assemble Prompt",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1920,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "https://api.groq.com/openai/v1/chat/completions",
+                                         "authentication":  "genericCredentialType",
+                                         "genericAuthType":  "httpHeaderAuth",
+                                         "sendBody":  true,
+                                         "specifyBody":  "json",
+                                         "jsonBody":  "={{ JSON.stringify({ model: \"llama-3.3-70b-versatile\", temperature: 0.2, response_format: { type: \"json_object\" }, messages: [ { role: \"system\", content: $json.systemPrompt }, { role: \"user\", content: $json.userPrompt } ] }) }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "n-groq",
+                      "name":  "Groq Agent",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       2140,
+                                       300
+                                   ],
+                      "retryOnFail":  true,
+                      "maxTries":  3,
+                      "waitBetweenTries":  2000
+                  },
+                  {
+                      "parameters":  {
+                                         "mode":  "runOnceForAllItems",
+                                         "jsCode":  "const lead = $(\u0027Validate\u0027).first().json;\nlet ai;\ntry {\n  ai = JSON.parse($json.choices[0].message.content);\n} catch (e) {\n  ai = { summary: \u0027(AI JSON parse failed)\u0027, financing_signal: \u0027low\u0027, timeline_signal: \u0027low\u0027,\n         fit_signal: \u0027low\u0027, reply: \u0027Thanks for reaching out. A Crestview agent will be in touch shortly.\u0027 };\n}\n// Normalize the model\u0027s signal vocabulary (it is inconsistent about casing/synonyms).\nconst norm = v =\u003e {\n  const x = String(v == null ? \u0027\u0027 : v).trim().toLowerCase();\n  if ([\u0027high\u0027, \u0027strong\u0027, \u0027hot\u0027, \u0027urgent\u0027, \u0027good\u0027].includes(x)) return \u0027high\u0027;\n  if ([\u0027medium\u0027, \u0027med\u0027, \u0027moderate\u0027, \u0027warm\u0027, \u0027mid\u0027].includes(x)) return \u0027medium\u0027;\n  return \u0027low\u0027;\n};\nconst fin = norm(ai.financing_signal), tl = norm(ai.timeline_signal), fit = norm(ai.fit_signal);\n// Deterministic real-estate score: financing readiness + timeline urgency + fit.\nconst F = { high: 40, medium: 22, low: 8 };   // financing readiness (strongest buy/sell signal)\nconst T = { high: 35, medium: 20, low: 8 };   // timeline urgency\nconst M = { high: 25, medium: 14, low: 4 };   // fit (intent / area / budget match)\nconst score = Math.min(100, F[fin] + T[tl] + M[fit]);\nconst temperature = score \u003e= 70 ? \u0027hot\u0027 : score \u003e= 40 ? \u0027warm\u0027 : \u0027cold\u0027;\n\nreturn [{ json: {\n  full_name: lead.full_name, email: lead.email, phone: lead.phone, message: lead.message,\n  intent: lead.intent, property_type: lead.property_type, location: lead.location,\n  budget: lead.budget, timeline: lead.timeline, financing: lead.financing,\n  source: lead.source, dedup_key: lead.dedup_key,\n  ai_summary: ai.summary, reply: ai.reply,\n  financing_signal: fin, timeline_signal: tl, fit_signal: fit,\n  score, temperature\n}}];"
+                                     },
+                      "id":  "n-score",
+                      "name":  "Parse and Score",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       2360,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "https://YOUR-PROJECT.supabase.co/rest/v1/leads?on_conflict=dedup_key",
+                                         "authentication":  "predefinedCredentialType",
+                                         "nodeCredentialType":  "supabaseApi",
+                                         "sendHeaders":  true,
+                                         "headerParameters":  {
+                                                                  "parameters":  [
+                                                                                     {
+                                                                                         "name":  "Prefer",
+                                                                                         "value":  "resolution=merge-duplicates,return=representation"
+                                                                                     }
+                                                                                 ]
+                                                              },
+                                         "sendBody":  true,
+                                         "specifyBody":  "json",
+                                         "jsonBody":  "={{ JSON.stringify({ full_name: $json.full_name, email: $json.email, phone: $json.phone, message: $json.message, intent: $json.intent, property_type: $json.property_type, location: $json.location, budget: $json.budget, timeline: $json.timeline, financing: $json.financing, source: $json.source, score: $json.score, temperature: $json.temperature, ai_summary: $json.ai_summary, dedup_key: $json.dedup_key }) }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "n-insert",
+                      "name":  "Insert Lead",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       2560,
+                                       300
+                                   ],
+                      "retryOnFail":  true,
+                      "maxTries":  3,
+                      "waitBetweenTries":  2000
+                  },
+                  {
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  true,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "loose"
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "id":  "cond-hot",
+                                                                                   "leftValue":  "={{ $json.temperature }}",
+                                                                                   "rightValue":  "hot",
+                                                                                   "operator":  {
+                                                                                                    "type":  "string",
+                                                                                                    "operation":  "equals"
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "n-ifhot",
+                      "name":  "IF Hot",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       2780,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "resource":  "message",
+                                         "operation":  "sendMessage",
+                                         "chatId":  "YOUR_TELEGRAM_CHAT_ID",
+                                         "text":  "=HOT LEAD ({{ $(\u0027Parse and Score\u0027).first().json.score }}/100) - {{ $(\u0027Parse and Score\u0027).first().json.intent }}\nName: {{ $(\u0027Parse and Score\u0027).first().json.full_name }}\nPhone: {{ $(\u0027Parse and Score\u0027).first().json.phone || \u0027n/a\u0027 }} | Email: {{ $(\u0027Parse and Score\u0027).first().json.email }}\nArea: {{ $(\u0027Parse and Score\u0027).first().json.location || \u0027n/a\u0027 }} | Budget: {{ $(\u0027Parse and Score\u0027).first().json.budget || \u0027n/a\u0027 }}\nTimeline: {{ $(\u0027Parse and Score\u0027).first().json.timeline }} | Financing: {{ $(\u0027Parse and Score\u0027).first().json.financing }}\n\n{{ $(\u0027Parse and Score\u0027).first().json.ai_summary }}",
+                                         "additionalFields":  {
+
+                                                              }
+                                     },
+                      "id":  "n-telegram",
+                      "name":  "Telegram Alert",
+                      "type":  "n8n-nodes-base.telegram",
+                      "typeVersion":  1.2,
+                      "position":  [
+                                       3000,
+                                       200
+                                   ],
+                      "retryOnFail":  true,
+                      "maxTries":  2,
+                      "waitBetweenTries":  1500
+                  },
+                  {
+                      "parameters":  {
+                                         "respondWith":  "json",
+                                         "responseBody":  "={{ JSON.stringify({ ok: true, score: $(\u0027Parse and Score\u0027).first().json.score, temperature: $(\u0027Parse and Score\u0027).first().json.temperature, reply: $(\u0027Parse and Score\u0027).first().json.reply }) }}",
+                                         "options":  {
+                                                         "responseCode":  200
+                                                     }
+                                     },
+                      "id":  "n-resp200",
+                      "name":  "Respond OK",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1,
+                      "position":  [
+                                       3240,
+                                       300
+                                   ]
+                  }
+              ],
+    "connections":  {
+                        "Webhook":  {
+                                        "main":  [
+                                                     [
+                                                         {
+                                                             "node":  "Validate",
+                                                             "type":  "main",
+                                                             "index":  0
+                                                         }
+                                                     ]
+                                                 ]
+                                    },
+                        "Validate":  {
+                                         "main":  [
+                                                      [
+                                                          {
+                                                              "node":  "IF Valid",
+                                                              "type":  "main",
+                                                              "index":  0
+                                                          }
+                                                      ]
+                                                  ]
+                                     },
+                        "IF Valid":  {
+                                         "main":  [
+                                                      [
+                                                          {
+                                                              "node":  "Dedup Check",
+                                                              "type":  "main",
+                                                              "index":  0
+                                                          }
+                                                      ],
+                                                      [
+                                                          {
+                                                              "node":  "Respond 400",
+                                                              "type":  "main",
+                                                              "index":  0
+                                                          }
+                                                      ]
+                                                  ]
+                                     },
+                        "Dedup Check":  {
+                                            "main":  [
+                                                         [
+                                                             {
+                                                                 "node":  "Check Dedup",
+                                                                 "type":  "main",
+                                                                 "index":  0
+                                                             }
+                                                         ]
+                                                     ]
+                                        },
+                        "Check Dedup":  {
+                                            "main":  [
+                                                         [
+                                                             {
+                                                                 "node":  "IF Exists",
+                                                                 "type":  "main",
+                                                                 "index":  0
+                                                             }
+                                                         ]
+                                                     ]
+                                        },
+                        "IF Exists":  {
+                                          "main":  [
+                                                       [
+                                                           {
+                                                               "node":  "Respond Duplicate",
+                                                               "type":  "main",
+                                                               "index":  0
+                                                           }
+                                                       ],
+                                                       [
+                                                           {
+                                                               "node":  "Embed Lead",
+                                                               "type":  "main",
+                                                               "index":  0
+                                                           }
+                                                       ]
+                                                   ]
+                                      },
+                        "Embed Lead":  {
+                                           "main":  [
+                                                        [
+                                                            {
+                                                                "node":  "RAG Retrieve",
+                                                                "type":  "main",
+                                                                "index":  0
+                                                            }
+                                                        ]
+                                                    ]
+                                       },
+                        "RAG Retrieve":  {
+                                             "main":  [
+                                                          [
+                                                              {
+                                                                  "node":  "Assemble Prompt",
+                                                                  "type":  "main",
+                                                                  "index":  0
+                                                              }
+                                                          ]
+                                                      ]
+                                         },
+                        "Assemble Prompt":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "Groq Agent",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "Groq Agent":  {
+                                           "main":  [
+                                                        [
+                                                            {
+                                                                "node":  "Parse and Score",
+                                                                "type":  "main",
+                                                                "index":  0
+                                                            }
+                                                        ]
+                                                    ]
+                                       },
+                        "Parse and Score":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "Insert Lead",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "Insert Lead":  {
+                                            "main":  [
+                                                         [
+                                                             {
+                                                                 "node":  "IF Hot",
+                                                                 "type":  "main",
+                                                                 "index":  0
+                                                             }
+                                                         ]
+                                                     ]
+                                        },
+                        "IF Hot":  {
+                                       "main":  [
+                                                    [
+                                                        {
+                                                            "node":  "Telegram Alert",
+                                                            "type":  "main",
+                                                            "index":  0
+                                                        }
+                                                    ],
+                                                    [
+                                                        {
+                                                            "node":  "Respond OK",
+                                                            "type":  "main",
+                                                            "index":  0
+                                                        }
+                                                    ]
+                                                ]
+                                   },
+                        "Telegram Alert":  {
+                                               "main":  [
+                                                            [
+                                                                {
+                                                                    "node":  "Respond OK",
+                                                                    "type":  "main",
+                                                                    "index":  0
+                                                                }
+                                                            ]
+                                                        ]
+                                           }
+                    },
+    "active":  false,
+    "settings":  {
+                     "executionOrder":  "v1"
+                 }
+}

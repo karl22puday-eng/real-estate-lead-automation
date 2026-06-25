@@ -1,0 +1,155 @@
+{
+    "name":  "01 KB Ingestion",
+    "nodes":  [
+                  {
+                      "parameters":  {
+
+                                     },
+                      "id":  "node-trigger",
+                      "name":  "Manual Trigger",
+                      "type":  "n8n-nodes-base.manualTrigger",
+                      "typeVersion":  1,
+                      "position":  [
+                                       240,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "mode":  "runOnceForAllItems",
+                                         "jsCode":  "const docs = [\r\n    {\r\n        \"source\":  \"about.md\",\r\n        \"text\":  \"# Crestview Realty — About \\u0026 Services\\n\\nCrestview Realty is a full-service residential real estate brokerage. We help people\\n**buy, sell, rent, and invest** in homes across the metro area, and we pair every client\\nwith a dedicated agent who knows the neighborhood. We work by referral and repeat\\nbusiness, so our whole model is built on responsiveness — most new inquiries get a\\npersonal reply the same day.\\n\\n## Who we help\\n\\n### Buyers\\nFirst-time buyers, move-up buyers, and relocations. We handle the whole journey:\\nneeds assessment, lender referral and pre-approval, home search and showings, offer\\nstrategy, negotiation, inspection, and closing. Buyer representation is **free to the\\nbuyer** — our commission is paid from the transaction at closing.\\n\\n### Sellers\\nWe price your home with a data-backed comparative market analysis (CMA), prep and stage\\nit, market it across the MLS and major portals, run showings and open houses, and\\nnegotiate to close. Listing commission is competitive and discussed up front (see\\nfinancing \\u0026 fees doc).\\n\\n### Renters \\u0026 landlords\\nWe place qualified tenants and represent landlords on residential rentals, including\\nlease paperwork and move-in coordination.\\n\\n### Investors\\nWe help investors find buy-and-hold and value-add residential properties, run the basic\\nnumbers (rent estimate, cap rate, cash-on-cash), and connect them with property managers.\\n\\n## Areas we serve\\nWe cover the metro core and surrounding suburbs — established family neighborhoods,\\nnew-construction communities, downtown condos, and nearby commuter towns. If you tell us\\nthe area and price range you\\u0027re targeting, we\\u0027ll let you know quickly whether it\\u0027s a\\nmarket we actively work and pair you with the right agent. (See the **areas** doc for the\\nneighborhoods we cover most.)\\n\\n## How working with us starts\\n1. You send a short inquiry (what you want to buy/sell/rent, your area, budget, timeline).\\n2. You get a fast, personal response and, if you\\u0027re ready, a no-pressure consultation.\\n3. We map out next steps — for buyers that\\u0027s usually pre-approval; for sellers it\\u0027s a\\n   CMA and a walkthrough.\\n\\n## What makes us different\\n- **Speed.** We respond fast because in real estate the first agent to reply usually wins\\n  the relationship — and buyers lose homes by waiting.\\n- **Honesty about fit.** If your timeline or budget isn\\u0027t a match for the area you want,\\n  we\\u0027ll tell you straight and help you adjust rather than waste your time.\\n- **One point of contact.** A dedicated agent, not a call-center handoff.\\n\\u003c/content\\u003e\\n\"\r\n    },\r\n    {\r\n        \"source\":  \"buying.md\",\r\n        \"text\":  \"# Crestview Realty — The Home Buying Process\\n\\nBuying a home with Crestview is designed to be clear and low-stress. Here\\u0027s how it works\\nand what to expect at each step.\\n\\n## Step 1 — Get pre-approved\\nBefore serious shopping, talk to a lender and get a **mortgage pre-approval** (not just a\\npre-qualification). Pre-approval tells you your real budget and makes your offers far\\nstronger — in a competitive market, sellers often won\\u0027t consider an offer without one.\\nCash buyers skip this but should be ready to show proof of funds. We can refer trusted\\nlocal lenders if you don\\u0027t have one.\\n\\n## Step 2 — Define your search\\nWe sit down (in person or over a call) to nail down: target neighborhoods, must-haves vs.\\nnice-to-haves, property type (house, condo, townhouse), price range, and timeline. The\\ntighter this is, the faster we find the right home.\\n\\n## Step 3 — Tour homes\\nWe set up showings that fit your schedule and send you new listings as they hit the\\nmarket. In fast markets, being able to tour quickly is the difference between getting the\\nhome and missing it.\\n\\n## Step 4 — Make an offer\\nWhen you find the one, we build an offer strategy: price, contingencies (financing,\\ninspection, appraisal), earnest money, and timing. We advise based on comparable sales\\nand how competitive the listing is, then negotiate on your behalf.\\n\\n## Step 5 — Under contract → inspection \\u0026 appraisal\\nOnce your offer is accepted, you\\u0027re \\\"under contract.\\\" You\\u0027ll do a **home inspection**\\n(and can renegotiate or walk if there are serious issues), and your lender orders an\\n**appraisal** to confirm the home\\u0027s value.\\n\\n## Step 6 — Closing\\nFinal loan approval, a walkthrough, signing, and you get the keys. Typical timeline from\\naccepted offer to closing is about **30–45 days** with financing, faster for cash.\\n\\n## Costs to plan for (buyers)\\n- **Down payment:** as low as 3–5% on many conventional loans; 20% avoids private\\n  mortgage insurance (PMI). FHA and VA options exist for those who qualify.\\n- **Closing costs:** roughly **2–5% of the purchase price** (lender fees, title,\\n  escrow, taxes).\\n- **Earnest money:** a good-faith deposit (often 1–3%) that applies to your purchase.\\n- **Buyer\\u0027s agent commission:** in most transactions this is paid through the deal at\\n  closing, not out of the buyer\\u0027s pocket — we\\u0027ll always confirm this for your specific\\n  deal up front.\\n\\n## How fast can I buy?\\nIf you\\u0027re pre-approved and decisive, you can be under contract within days and closed in\\nabout a month. The most common delays are waiting on pre-approval and indecision on the\\nsearch — getting those handled early is the single biggest time-saver.\\n\\u003c/content\\u003e\\n\"\r\n    },\r\n    {\r\n        \"source\":  \"selling.md\",\r\n        \"text\":  \"# Crestview Realty — Selling Your Home\\n\\nWe sell homes for the best price the market will support, in the timeline you need, with\\nas little disruption to your life as possible.\\n\\n## Step 1 — Comparative Market Analysis (CMA)\\nWe analyze recent comparable sales, current competition, and market trends in your\\nneighborhood to recommend a **listing price**. Pricing right from day one matters more\\nthan anything — overpriced homes sit, go stale, and ultimately sell for *less*.\\n\\n## Step 2 — Prep \\u0026 stage\\nWe advise on repairs, decluttering, and light staging that actually move the needle on\\nprice. We arrange professional photography (and video/3D tour for higher-value homes)\\nbecause most buyers see your home online first.\\n\\n## Step 3 — List \\u0026 market\\nYour home goes live on the **MLS** and syndicates to the major portals (Zillow,\\nRealtor.com, Redfin, etc.). We add it to our buyer network, run social and email\\npromotion, and host showings and open houses.\\n\\n## Step 4 — Offers \\u0026 negotiation\\nWe review every offer with you — not just price, but contingencies, financing strength,\\nand timeline — and negotiate to maximize your net proceeds and certainty of closing.\\n\\n## Step 5 — Under contract → closing\\nWe manage inspection, appraisal, and the buyer\\u0027s financing through to closing, keeping\\nthe deal on track. Typical time from listing to closing is a few weeks of marketing plus\\n~30–45 days under contract, but it varies with the market.\\n\\n## What it costs to sell\\n- **Listing commission:** competitive and agreed in writing before we list. Commissions\\n  are negotiable; we\\u0027ll explain exactly what\\u0027s included and how any buyer-agent\\n  compensation is handled for your sale.\\n- **Seller closing costs:** typically include title/escrow fees and prorated taxes.\\n- **Optional prep:** staging or repairs, only where they pay for themselves.\\n\\n## What\\u0027s my home worth?\\nThe honest answer needs a CMA — automated online \\\"estimates\\\" are often off by a wide\\nmargin because they can\\u0027t see your home\\u0027s condition, updates, or street. Send us your\\naddress and a few details and we\\u0027ll prepare a real valuation, no obligation.\\n\\n## How fast can I sell?\\nWell-priced, well-presented homes in active neighborhoods often go under contract within\\na couple of weeks. Pricing and presentation are the two levers that control speed —\\nthat\\u0027s where we focus.\\n\\u003c/content\\u003e\\n\"\r\n    },\r\n    {\r\n        \"source\":  \"financing.md\",\r\n        \"text\":  \"# Crestview Realty — Financing \\u0026 Fees\\n\\nA plain-English guide to paying for a home and what working with us costs.\\n\\n## Pre-qualification vs. pre-approval\\n- **Pre-qualification** is a quick estimate based on info you tell a lender. It\\u0027s a\\n  rough guide, not a commitment.\\n- **Pre-approval** means the lender has verified your income, assets, and credit and will\\n  lend up to a stated amount. This is what you want — it sets your real budget and makes\\n  your offers credible. **Get pre-approved before you shop seriously.**\\n\\n## How much do I need for a down payment?\\n- Many conventional loans allow **3–5% down**.\\n- **20% down** lets you avoid private mortgage insurance (PMI) and lowers your payment.\\n- **FHA** loans allow lower down payments for qualifying buyers; **VA** loans can offer\\n  0% down for eligible veterans/service members.\\n- The right answer depends on your finances and goals — a lender will lay out the options.\\n\\n## Closing costs\\nPlan for roughly **2–5% of the purchase price** in closing costs (lender fees, title\\ninsurance, escrow, appraisal, prepaid taxes and insurance). Some of these are\\nnegotiable, and in some markets sellers contribute toward buyer closing costs.\\n\\n## Cash buyers\\nCash purchases skip the loan and appraisal steps, close faster (often 1–2 weeks), and are\\nvery attractive to sellers. You\\u0027ll need to show **proof of funds** with your offer.\\n\\n## What does working with Crestview cost?\\n- **Buyers:** in most transactions, the buyer\\u0027s agent commission is paid through the deal\\n  at closing, so representation is typically **free to the buyer**. We always confirm the\\n  exact arrangement for your specific purchase in writing before you make an offer.\\n- **Sellers:** listing commission is **negotiable** and agreed in writing before we list.\\n  We\\u0027ll show you exactly what\\u0027s included (photography, marketing, MLS, negotiation,\\n  transaction management) and how buyer-agent compensation is handled.\\n\\n## Investors — the quick numbers we run\\n- **Cap rate** = net operating income ÷ purchase price.\\n- **Cash-on-cash** = annual pre-tax cash flow ÷ cash invested.\\n- **Rent estimate** vs. mortgage + taxes + insurance + maintenance to gauge cash flow.\\nWe\\u0027ll run a basic analysis on any property you\\u0027re considering and connect you with a\\nproperty manager if you want it hands-off.\\n\\n## The bottom line on budget\\nYour **pre-approval amount** and your **down payment** together set your real shopping\\nrange. Sorting these out early is the single biggest thing you can do to move fast and\\nmake winning offers.\\n\\u003c/content\\u003e\\n\"\r\n    },\r\n    {\r\n        \"source\":  \"areas.md\",\r\n        \"text\":  \"# Crestview Realty — Areas We Serve\\n\\nWe actively work the metro core and the surrounding commuter belt. Below are the areas we\\ncover most, with the kind of buyer they tend to suit. If your target isn\\u0027t listed, ask —\\nwe likely still cover it or can refer a trusted partner.\\n\\n## Downtown \\u0026 Midtown\\nCondos, lofts, and townhomes for buyers who want walkability, nightlife, and a short\\ncommute. Price points range from entry-level condos to premium high-rise units. Best for\\nfirst-time buyers, professionals, and downsizers.\\n\\n## Westside \\u0026 Garden District\\nEstablished, leafy family neighborhoods with single-family homes, good schools, and larger\\nlots. Popular with move-up buyers and families. Mid-to-upper price range.\\n\\n## Northgate \\u0026 the New-Construction Communities\\nNewer subdivisions with modern single-family homes and townhomes, amenities like pools and\\nparks, and builder incentives. Great for families wanting new construction and predictable\\nHOAs.\\n\\n## Riverside \\u0026 Old Town\\nCharacter homes, historic streets, and a mix of renovated and fixer-upper properties.\\nSuits buyers who want charm and are open to some renovation, plus value-add investors.\\n\\n## Suburban Commuter Towns (Fairmont, Lake Hollow, Crestview Heights)\\nMore space for the money — larger homes and lots a short drive from the core. Popular with\\nfamilies prioritizing size, yards, and schools over a downtown commute.\\n\\n## Investment focus areas\\nFor buy-and-hold and value-add investors, Riverside, Old Town, and parts of Northgate\\noffer the best mix of rent demand and entry price. We\\u0027ll run rent estimates and basic\\nreturn numbers on any specific property.\\n\\n## Not sure which area fits?\\nTell us your budget, must-haves, and how far you\\u0027re willing to commute, and we\\u0027ll point\\nyou to the neighborhoods that actually match — and tell you honestly where your budget\\nwill and won\\u0027t stretch.\\n\\u003c/content\\u003e\\n\"\r\n    },\r\n    {\r\n        \"source\":  \"faq.md\",\r\n        \"text\":  \"# Crestview Realty — FAQ\\n\\n**What does Crestview Realty do?**\\nWe\\u0027re a full-service residential brokerage. We help people buy, sell, rent, and invest in\\nhomes across the metro area, with a dedicated agent for every client.\\n\\n**How do I get started?**\\nSend a short inquiry with what you\\u0027re trying to do (buy, sell, rent, or invest), the area\\nyou\\u0027re interested in, your budget, and your timeline. You\\u0027ll get a fast, personal\\nresponse — usually the same day — and we\\u0027ll suggest next steps.\\n\\n**Does it cost me anything to work with a buyer\\u0027s agent?**\\nIn most transactions, the buyer\\u0027s agent commission is paid through the deal at closing, so\\nbuyer representation is typically free to you. We confirm the exact arrangement in writing\\nbefore you make an offer.\\n\\n**What\\u0027s your commission to sell my home?**\\nListing commission is negotiable and agreed in writing before we list. We\\u0027ll explain\\nexactly what\\u0027s included — pricing analysis, prep advice, professional photography,\\nMLS + portal marketing, showings, negotiation, and transaction management.\\n\\n**How much do I need to buy a home?**\\nIt depends on the loan. Many conventional loans allow 3–5% down; 20% avoids PMI. Plan for\\n2–5% of the price in closing costs too. The best first step is getting pre-approved so you\\nknow your real budget. (See the financing doc.)\\n\\n**Do I need to be pre-approved before looking?**\\nFor serious shopping, yes. Pre-approval sets your real budget and makes your offers\\ncompetitive — in many markets sellers won\\u0027t consider an offer without it. We can refer\\ntrusted lenders. Cash buyers should be ready to show proof of funds.\\n\\n**How long does it take to buy or sell?**\\nBuying: once you\\u0027re pre-approved and decisive, you can be under contract in days and\\nclosed in about 30–45 days (faster for cash). Selling: well-priced homes often go under\\ncontract within a couple of weeks, then ~30–45 days to close.\\n\\n**What areas do you cover?**\\nThe metro core and surrounding suburbs — family neighborhoods, new-construction\\ncommunities, downtown condos, and nearby commuter towns. Tell us your target area and\\nprice range and we\\u0027ll confirm quickly whether it\\u0027s a market we actively work.\\n\\n**What\\u0027s my home worth?**\\nWe\\u0027ll prepare a real comparative market analysis (CMA) based on your home\\u0027s condition,\\nupdates, and recent comparable sales — far more accurate than an automated online\\nestimate. Send your address and a few details, no obligation.\\n\\n**Can you help investors?**\\nYes. We help with buy-and-hold and value-add residential properties, run the basic\\nnumbers (rent estimate, cap rate, cash-on-cash), and can connect you with property\\nmanagement.\\n\\n**How fast will someone get back to me?**\\nFast — responsiveness is the core of how we work. Most inquiries get a personal reply the\\nsame day, and urgent buyers/sellers are prioritized.\\n\\n**Do you help with rentals?**\\nYes — we place qualified tenants and represent landlords on residential rentals,\\nincluding lease paperwork and move-in coordination.\\n\\u003c/content\\u003e\\n\"\r\n    }\r\n];\n\nconst MAX = 600; // target chunk size in characters\nconst items = [];\nfor (const doc of docs) {\n  const paras = doc.text.split(/\\n\\s*\\n/).map(p =\u003e p.trim()).filter(Boolean);\n  let buf = \u0027\u0027;\n  for (const p of paras) {\n    const candidate = buf ? buf + \u0027\\n\\n\u0027 + p : p;\n    if (candidate.length \u003e MAX \u0026\u0026 buf) {\n      items.push({ json: { content: buf, source: doc.source } });\n      buf = p;\n    } else {\n      buf = candidate;\n    }\n  }\n  if (buf) items.push({ json: { content: buf, source: doc.source } });\n}\nreturn items;"
+                                     },
+                      "id":  "node-chunk",
+                      "name":  "Chunk Docs",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       460,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent",
+                                         "authentication":  "genericCredentialType",
+                                         "genericAuthType":  "httpHeaderAuth",
+                                         "sendBody":  true,
+                                         "specifyBody":  "json",
+                                         "jsonBody":  "={{ JSON.stringify({ model: \"models/gemini-embedding-001\", content: { parts: [ { text: $json.content } ] }, outputDimensionality: 768 }) }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "node-embed",
+                      "name":  "Embed (Gemini)",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       680,
+                                       300
+                                   ],
+                      "retryOnFail":  true,
+                      "maxTries":  3,
+                      "waitBetweenTries":  2000
+                  },
+                  {
+                      "parameters":  {
+                                         "mode":  "runOnceForEachItem",
+                                         "jsCode":  "// Runs once per item. $json = the Gemini embedding response for this chunk.\nconst vals = $json.embedding \u0026\u0026 $json.embedding.values;\nif (!Array.isArray(vals) || vals.length !== 768) {\n  throw new Error(\u0027Embedding missing or wrong dimension: \u0027 + (vals ? vals.length : \u0027none\u0027));\n}\nconst src = $(\u0027Chunk Docs\u0027).item.json;     // the matching chunk (paired item)\nreturn {\n  content: src.content,\n  metadata: { source: src.source },\n  embedding: \u0027[\u0027 + vals.join(\u0027,\u0027) + \u0027]\u0027     // pgvector accepts the bracketed string form\n};"
+                                     },
+                      "id":  "node-buildrow",
+                      "name":  "Build Row",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       900,
+                                       300
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "https://YOUR-PROJECT.supabase.co/rest/v1/kb_documents",
+                                         "authentication":  "predefinedCredentialType",
+                                         "nodeCredentialType":  "supabaseApi",
+                                         "sendHeaders":  true,
+                                         "headerParameters":  {
+                                                                  "parameters":  [
+                                                                                     {
+                                                                                         "name":  "Prefer",
+                                                                                         "value":  "return=minimal"
+                                                                                     }
+                                                                                 ]
+                                                              },
+                                         "sendBody":  true,
+                                         "specifyBody":  "json",
+                                         "jsonBody":  "={{ JSON.stringify({ content: $json.content, metadata: $json.metadata, embedding: $json.embedding }) }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "node-insert",
+                      "name":  "Insert (Supabase)",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       1120,
+                                       300
+                                   ],
+                      "retryOnFail":  true,
+                      "maxTries":  3,
+                      "waitBetweenTries":  2000
+                  }
+              ],
+    "connections":  {
+                        "Manual Trigger":  {
+                                               "main":  [
+                                                            [
+                                                                {
+                                                                    "node":  "Chunk Docs",
+                                                                    "type":  "main",
+                                                                    "index":  0
+                                                                }
+                                                            ]
+                                                        ]
+                                           },
+                        "Chunk Docs":  {
+                                           "main":  [
+                                                        [
+                                                            {
+                                                                "node":  "Embed (Gemini)",
+                                                                "type":  "main",
+                                                                "index":  0
+                                                            }
+                                                        ]
+                                                    ]
+                                       },
+                        "Embed (Gemini)":  {
+                                               "main":  [
+                                                            [
+                                                                {
+                                                                    "node":  "Build Row",
+                                                                    "type":  "main",
+                                                                    "index":  0
+                                                                }
+                                                            ]
+                                                        ]
+                                           },
+                        "Build Row":  {
+                                          "main":  [
+                                                       [
+                                                           {
+                                                               "node":  "Insert (Supabase)",
+                                                               "type":  "main",
+                                                               "index":  0
+                                                           }
+                                                       ]
+                                                   ]
+                                      }
+                    },
+    "active":  false,
+    "settings":  {
+                     "executionOrder":  "v1"
+                 }
+}
