@@ -1,0 +1,280 @@
+{
+    "name":  "03 Meta Lead Intake",
+    "nodes":  [
+                  {
+                      "parameters":  {
+                                         "httpMethod":  "GET",
+                                         "path":  "meta-lead",
+                                         "responseMode":  "responseNode",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "n-verify",
+                      "name":  "Webhook Verify (GET)",
+                      "type":  "n8n-nodes-base.webhook",
+                      "typeVersion":  2,
+                      "position":  [
+                                       220,
+                                       200
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  true,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "loose"
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "id":  "cond-token",
+                                                                                   "leftValue":  "={{ $json.query[\"hub.verify_token\"] }}",
+                                                                                   "rightValue":  "YOUR_VERIFY_TOKEN",
+                                                                                   "operator":  {
+                                                                                                    "type":  "string",
+                                                                                                    "operation":  "equals"
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        }
+                                     },
+                      "id":  "n-iftoken",
+                      "name":  "IF Token Valid",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       440,
+                                       200
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "respondWith":  "text",
+                                         "responseBody":  "={{ $json.query[\"hub.challenge\"] }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "n-challenge",
+                      "name":  "Respond Challenge",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1,
+                      "position":  [
+                                       680,
+                                       120
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "respondWith":  "text",
+                                         "responseBody":  "forbidden",
+                                         "options":  {
+                                                         "responseCode":  403
+                                                     }
+                                     },
+                      "id":  "n-forbidden",
+                      "name":  "Respond Forbidden",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1,
+                      "position":  [
+                                       680,
+                                       280
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "httpMethod":  "POST",
+                                         "path":  "meta-lead",
+                                         "responseMode":  "responseNode",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "n-lead",
+                      "name":  "Webhook Lead (POST)",
+                      "type":  "n8n-nodes-base.webhook",
+                      "typeVersion":  2,
+                      "position":  [
+                                       220,
+                                       460
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "respondWith":  "text",
+                                         "responseBody":  "EVENT_RECEIVED",
+                                         "options":  {
+                                                         "responseCode":  200
+                                                     }
+                                     },
+                      "id":  "n-ack",
+                      "name":  "Respond 200",
+                      "type":  "n8n-nodes-base.respondToWebhook",
+                      "typeVersion":  1,
+                      "position":  [
+                                       440,
+                                       360
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "mode":  "runOnceForAllItems",
+                                         "jsCode":  "// Meta POSTs { object:\u0027page\u0027, entry:[ { changes:[ { field:\u0027leadgen\u0027, value:{ leadgen_id, form_id, page_id } } ] } ] }\nconst body = ($input.first().json.body) || {};\nconst out = [];\nfor (const e of (body.entry || [])) {\n  for (const c of (e.changes || [])) {\n    const v = (c \u0026\u0026 c.value) || {};\n    if (v.leadgen_id) out.push({ json: {\n      leadgen_id: String(v.leadgen_id),\n      form_id: v.form_id || null,\n      page_id: v.page_id || null\n    }});\n  }\n}\n// Empty array =\u003e no leadgen_id present (e.g. a non-lead event); branch stops cleanly.\nreturn out;"
+                                     },
+                      "id":  "n-extract",
+                      "name":  "Extract Lead IDs",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       440,
+                                       560
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "GET",
+                                         "url":  "=https://graph.facebook.com/v19.0/{{ $json.leadgen_id }}?fields=field_data,created_time",
+                                         "authentication":  "genericCredentialType",
+                                         "genericAuthType":  "httpHeaderAuth",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "n-fetch",
+                      "name":  "Fetch Lead (Graph API)",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       660,
+                                       560
+                                   ],
+                      "retryOnFail":  true,
+                      "maxTries":  3,
+                      "waitBetweenTries":  2000
+                  },
+                  {
+                      "parameters":  {
+                                         "mode":  "runOnceForEachItem",
+                                         "jsCode":  "// Graph API returned { id, created_time, field_data:[{name,values}] } for this lead.\nconst fd = {};\nfor (const f of ($json.field_data || [])) fd[f.name] = (f.values \u0026\u0026 f.values[0]) || \u0027\u0027;\nconst lc = s =\u003e String(s || \u0027\u0027).trim().toLowerCase();\nconst timelineMap = {\n  \u0027asap\u0027: \u0027asap\u0027, \u0027immediately\u0027: \u0027asap\u0027,\n  \u00271-3 months\u0027: \u00271-3 months\u0027, \u00273-6 months\u0027: \u00273-6 months\u0027,\n  \u0027just browsing\u0027: \u0027browsing\u0027, \u0027browsing\u0027: \u0027browsing\u0027\n};\nconst finMap = {\n  \u0027pre-approved\u0027: \u0027pre-approved\u0027, \u0027cash\u0027: \u0027cash\u0027, \u0027cash buyer\u0027: \u0027cash\u0027,\n  \u0027need a lender\u0027: \u0027need lender\u0027, \u0027just researching\u0027: \u0027researching\u0027\n};\nreturn [{ json: {\n  full_name: fd.full_name || fd.name || \u0027\u0027,\n  email: fd.email || \u0027\u0027,\n  phone: fd.phone_number || fd.phone || \u0027\u0027,\n  intent: lc(fd.intent),\n  property_type: fd.property_type || \u0027\u0027,\n  location: fd.location || fd.city || \u0027\u0027,\n  budget: fd.budget || \u0027\u0027,\n  timeline: timelineMap[lc(fd.timeline)] || \u0027browsing\u0027,\n  financing: finMap[lc(fd.financing)] || \u0027researching\u0027,\n  message: fd.message || fd.notes || \u0027\u0027,\n  source: \u0027facebook\u0027\n}}];"
+                                     },
+                      "id":  "n-map",
+                      "name":  "Map Meta Fields",
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       880,
+                                       560
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "https://karlchretien.app.n8n.cloud/webhook/realestate-intake",
+                                         "sendBody":  true,
+                                         "specifyBody":  "json",
+                                         "jsonBody":  "={{ JSON.stringify({ full_name: $json.full_name, email: $json.email, phone: $json.phone, intent: $json.intent, property_type: $json.property_type, location: $json.location, budget: $json.budget, timeline: $json.timeline, financing: $json.financing, message: $json.message, source: $json.source }) }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "n-forward",
+                      "name":  "Forward to Intake",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       1100,
+                                       560
+                                   ],
+                      "retryOnFail":  true,
+                      "maxTries":  3,
+                      "waitBetweenTries":  2000
+                  }
+              ],
+    "connections":  {
+                        "Webhook Verify (GET)":  {
+                                                     "main":  [
+                                                                  [
+                                                                      {
+                                                                          "node":  "IF Token Valid",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ]
+                                                              ]
+                                                 },
+                        "IF Token Valid":  {
+                                               "main":  [
+                                                            [
+                                                                {
+                                                                    "node":  "Respond Challenge",
+                                                                    "type":  "main",
+                                                                    "index":  0
+                                                                }
+                                                            ],
+                                                            [
+                                                                {
+                                                                    "node":  "Respond Forbidden",
+                                                                    "type":  "main",
+                                                                    "index":  0
+                                                                }
+                                                            ]
+                                                        ]
+                                           },
+                        "Webhook Lead (POST)":  {
+                                                    "main":  [
+                                                                 [
+                                                                     {
+                                                                         "node":  "Respond 200",
+                                                                         "type":  "main",
+                                                                         "index":  0
+                                                                     },
+                                                                     {
+                                                                         "node":  "Extract Lead IDs",
+                                                                         "type":  "main",
+                                                                         "index":  0
+                                                                     }
+                                                                 ]
+                                                             ]
+                                                },
+                        "Extract Lead IDs":  {
+                                                 "main":  [
+                                                              [
+                                                                  {
+                                                                      "node":  "Fetch Lead (Graph API)",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ]
+                                                          ]
+                                             },
+                        "Fetch Lead (Graph API)":  {
+                                                       "main":  [
+                                                                    [
+                                                                        {
+                                                                            "node":  "Map Meta Fields",
+                                                                            "type":  "main",
+                                                                            "index":  0
+                                                                        }
+                                                                    ]
+                                                                ]
+                                                   },
+                        "Map Meta Fields":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "Forward to Intake",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            }
+                    },
+    "active":  false,
+    "settings":  {
+                     "executionOrder":  "v1"
+                 }
+}

@@ -131,10 +131,12 @@ real-estate-lead-automation/
 │  └─ dashboard.html          # Read-only CRM dashboard (Supabase anon + RLS)
 ├─ workflows/
 │  ├─ 01_kb_ingestion.json    # One-time RAG ingestion (chunk → embed → store)
-│  └─ 02_lead_qualification.json  # The main brain (17 nodes)
+│  ├─ 02_lead_qualification.json  # The main brain (17 nodes)
+│  └─ 03_meta_lead_intake.json    # Facebook/Instagram Lead Ads → the same pipeline (10 nodes)
 ├─ scripts/
 │  ├─ build-ingestion-workflow.ps1     # Reproducibly generate the workflow JSON
-│  └─ build-qualification-workflow.ps1  # …from source, instead of hand-editing
+│  ├─ build-qualification-workflow.ps1  # …from source, instead of hand-editing
+│  └─ build-meta-lead-workflow.ps1      # the Meta Lead Ads intake workflow
 ├─ db/
 │  └─ schema.sql              # pgvector, leads, RLS, sanitized view, RPCs
 ├─ kb/                        # Agency docs (about, buying, selling, financing, areas, faq)
@@ -199,7 +201,7 @@ Full details in [`docs/BUILD_GUIDE.md`](docs/BUILD_GUIDE.md).
 - [ ] Drip nurture sequence for long-cycle ("browsing") leads.
 - [ ] Lead lifecycle automation (stage transitions: `new → contacted → showing → offer → closed/lost`).
 - [ ] Round-robin routing to multiple agents by area/price band.
-- [ ] Native Meta Lead Ads trigger workflow (`03_meta_lead_intake`) committed alongside.
+- [x] Meta Lead Ads intake workflow (`03_meta_lead_intake`) — Facebook/Instagram leads into the same pipeline.
 
 ---
 
