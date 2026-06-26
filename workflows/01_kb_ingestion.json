@@ -70,7 +70,7 @@
                   {
                       "parameters":  {
                                          "method":  "POST",
-                                         "url":  "https://YOUR-PROJECT.supabase.co/rest/v1/kb_documents",
+                                         "url":  "https://rwarsojufsnceswxwwzk.supabase.co/rest/v1/kb_documents",
                                          "authentication":  "predefinedCredentialType",
                                          "nodeCredentialType":  "supabaseApi",
                                          "sendHeaders":  true,

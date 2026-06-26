@@ -9,7 +9,7 @@ $out  = Join-Path $root 'workflows\01_kb_ingestion.json'
 New-Item -ItemType Directory -Force -Path (Join-Path $root 'workflows') | Out-Null
 
 # Set this to your Supabase project URL before importing into n8n.
-$SUPA = 'https://YOUR-PROJECT.supabase.co'
+$SUPA = 'https://rwarsojufsnceswxwwzk.supabase.co'
 
 # --- read KB docs (ReadAllText => clean UTF-8 string, no ETS NoteProperties) ---
 function Read-Doc($name) { return [System.IO.File]::ReadAllText((Join-Path $kb $name), [System.Text.Encoding]::UTF8) }

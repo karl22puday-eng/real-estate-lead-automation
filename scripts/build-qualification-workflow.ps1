@@ -6,7 +6,7 @@ $out  = Join-Path $root 'workflows\02_lead_qualification.json'
 New-Item -ItemType Directory -Force -Path (Join-Path $root 'workflows') | Out-Null
 
 # Set these before importing into n8n.
-$SUPA   = 'https://YOUR-PROJECT.supabase.co'
+$SUPA   = 'https://rwarsojufsnceswxwwzk.supabase.co'
 $TG_CHAT = 'YOUR_TELEGRAM_CHAT_ID'
 
 # ---------- Code: Validate & Normalize ----------

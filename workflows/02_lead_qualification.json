@@ -85,7 +85,7 @@
                   {
                       "parameters":  {
                                          "method":  "POST",
-                                         "url":  "https://YOUR-PROJECT.supabase.co/rest/v1/rpc/lead_exists",
+                                         "url":  "https://rwarsojufsnceswxwwzk.supabase.co/rest/v1/rpc/lead_exists",
                                          "authentication":  "predefinedCredentialType",
                                          "nodeCredentialType":  "supabaseApi",
                                          "sendBody":  true,
@@ -198,7 +198,7 @@
                   {
                       "parameters":  {
                                          "method":  "POST",
-                                         "url":  "https://YOUR-PROJECT.supabase.co/rest/v1/rpc/match_documents",
+                                         "url":  "https://rwarsojufsnceswxwwzk.supabase.co/rest/v1/rpc/match_documents",
                                          "authentication":  "predefinedCredentialType",
                                          "nodeCredentialType":  "supabaseApi",
                                          "sendBody":  true,
@@ -276,7 +276,7 @@
                   {
                       "parameters":  {
                                          "method":  "POST",
-                                         "url":  "https://YOUR-PROJECT.supabase.co/rest/v1/leads?on_conflict=dedup_key",
+                                         "url":  "https://rwarsojufsnceswxwwzk.supabase.co/rest/v1/leads?on_conflict=dedup_key",
                                          "authentication":  "predefinedCredentialType",
                                          "nodeCredentialType":  "supabaseApi",
                                          "sendHeaders":  true,
