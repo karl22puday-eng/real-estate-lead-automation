@@ -43,4 +43,3 @@ Windows 11 + PowerShell primary. Keep momentum: end each step with the next conc
 ## Definition of done (per deliverable)
 Runs on real input ✓ · one failure case handled ✓ · no hardcoded secrets ✓ ·
 exported/committed ✓ · documented ✓. Until all five hold, it's in progress — and I say so.
-</content>

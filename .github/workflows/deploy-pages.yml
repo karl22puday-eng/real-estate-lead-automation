@@ -35,4 +35,3 @@ jobs:
           path: ./frontend
       - id: deployment
         uses: actions/deploy-pages@v4
-</content>

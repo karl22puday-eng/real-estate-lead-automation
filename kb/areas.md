@@ -35,4 +35,3 @@ return numbers on any specific property.
 Tell us your budget, must-haves, and how far you're willing to commute, and we'll point
 you to the neighborhoods that actually match — and tell you honestly where your budget
 will and won't stretch.
-</content>

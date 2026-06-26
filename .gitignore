@@ -15,4 +15,3 @@ npm-debug.log*
 
 # n8n local exports that may contain credentials — export to /workflows manually instead
 *.credentials.json
-</content>

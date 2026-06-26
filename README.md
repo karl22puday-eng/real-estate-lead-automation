@@ -205,4 +205,3 @@ Full details in [`docs/BUILD_GUIDE.md`](docs/BUILD_GUIDE.md).
 
 *Built with a 100% free, no-subscription stack — n8n · Meta Lead Ads · Groq · Gemini ·
 Supabase · GitHub Pages · Telegram.*
-</content>

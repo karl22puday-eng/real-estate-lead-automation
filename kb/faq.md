@@ -56,4 +56,3 @@ same day, and urgent buyers/sellers are prioritized.
 **Do you help with rentals?**
 Yes — we place qualified tenants and represent landlords on residential rentals,
 including lease paperwork and move-in coordination.
-</content>

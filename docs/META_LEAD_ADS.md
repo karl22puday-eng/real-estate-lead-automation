@@ -144,4 +144,3 @@ Because every Meta lead is wrapped under `body` with the same field names, the e
 - **Swap the CRM:** the same mapped payload can be POSTed to GoHighLevel, HubSpot, or any
   CRM's contact API instead of (or in addition to) Supabase — only the final write node
   changes.
-</content>

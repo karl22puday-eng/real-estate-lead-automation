@@ -47,4 +47,3 @@ neighborhoods we cover most.)
 - **Honesty about fit.** If your timeline or budget isn't a match for the area you want,
   we'll tell you straight and help you adjust rather than waste your time.
 - **One point of contact.** A dedicated agent, not a call-center handoff.
-</content>

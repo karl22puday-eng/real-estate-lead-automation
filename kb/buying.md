@@ -48,4 +48,3 @@ accepted offer to closing is about **30–45 days** with financing, faster for c
 If you're pre-approved and decisive, you can be under contract within days and closed in
 about a month. The most common delays are waiting on pre-approval and indecision on the
 search — getting those handled early is the single biggest time-saver.
-</content>

@@ -87,4 +87,3 @@ intake shape so validation/scoring/routing work unchanged.
 ## Definition of done
 Runs on real sample input ✓ · handles a failure case gracefully (bad input, duplicate) ✓ ·
 no hardcoded secrets ✓ · workflows exported to `/workflows` ✓ · documented ✓.
-</content>

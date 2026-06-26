@@ -43,4 +43,3 @@ address and a few details and we'll prepare a real valuation, no obligation.
 Well-priced, well-presented homes in active neighborhoods often go under contract within
 a couple of weeks. Pricing and presentation are the two levers that control speed —
 that's where we focus.
-</content>

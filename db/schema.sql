@@ -87,4 +87,3 @@ returns table(found boolean)
 language sql stable as $$
   select exists(select 1 from leads where dedup_key = p_key);
 $$;
-</content>

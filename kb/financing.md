@@ -44,4 +44,3 @@ property manager if you want it hands-off.
 Your **pre-approval amount** and your **down payment** together set your real shopping
 range. Sorting these out early is the single biggest thing you can do to move fast and
 make winning offers.
-</content>
